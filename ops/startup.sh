@@ -15,6 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PORT_FILE="$REPO_ROOT/.forge-port"
 PID_FILE="$REPO_ROOT/.forge-python.pid"
+LOG_FILE="$REPO_ROOT/.forge-python.log"
 PORT_MIN=8000
 PORT_MAX=9000
 DEFAULT_PORT=8000
@@ -181,18 +182,29 @@ python_start() {
     log_info "Starting Python server on port $port..."
     
     cd "$REPO_ROOT"
-    python3 src/server.py --port "$port" &
+    nohup python3 src/server.py --port "$port" </dev/null > "$LOG_FILE" 2>&1 &
     local pid=$!
     echo "$pid" > "$PID_FILE"
+    disown "$pid" 2>/dev/null || true
     
-    # Wait briefly and verify it started
-    sleep 1
-    if kill -0 "$pid" 2>/dev/null; then
+    # Wait briefly and verify it responds before reporting success
+    local count=0
+    while [[ $count -lt 10 ]]; do
+        if curl -s "http://localhost:$port" &>/dev/null; then
+            break
+        fi
+        sleep 0.5
+        ((count++))
+    done
+
+    if kill -0 "$pid" 2>/dev/null && curl -s "http://localhost:$port" &>/dev/null; then
         log_success "Server started successfully"
         log_info "PID: $pid"
         log_info "URL: http://localhost:$port"
+        log_info "Log: $LOG_FILE"
     else
         log_error "Server failed to start"
+        log_info "Check log: $LOG_FILE"
         rm -f "$PID_FILE"
         return 1
     fi
@@ -240,6 +252,7 @@ python_status() {
         log_info "PID: $pid"
         log_info "Port: $port"
         log_info "URL: http://localhost:$port"
+        log_info "Log: $LOG_FILE"
     else
         log_info "Server is not running"
         rm -f "$PID_FILE" 2>/dev/null || true
@@ -372,6 +385,7 @@ EXAMPLES:
 STATE FILES:
     .forge-port         Stores the last used port
     .forge-python.pid   Stores the Python server PID
+    .forge-python.log   Stores Python server output
 
 NOTES:
     - Docker mode requires Docker Desktop or Docker Engine with Compose

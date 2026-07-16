@@ -8,7 +8,7 @@ LABEL description="ForgeAppTemplate application server"
 WORKDIR /app
 
 # Copy application source
-COPY ../src/ ./src/
+COPY src/ ./src/
 
 # Expose default port
 EXPOSE 8000

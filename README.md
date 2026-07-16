@@ -118,6 +118,7 @@ See [devdocs/04_testing.md](devdocs/04_testing.md) for detailed comparison.
 | Screenshots | `marketplace/screenshots/` | **Tracked** |
 | Python venv | `.venv/` | Ignored |
 | Port state | `.forge-port` | Ignored |
+| Python server log | `.forge-python.log` | Ignored |
 
 ## Marketplace Acceptance Contract
 
