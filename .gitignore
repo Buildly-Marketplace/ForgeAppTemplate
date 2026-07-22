@@ -15,6 +15,12 @@ build/
 .forge-port
 .forge-python.pid
 
+# Buildly / Buster AI-native workflow state
+# Volatile machine state is ignored; human-readable docs under
+# devdocs/generated/ stay tracked and reviewable.
+.buildly/sync/pending/
+.buildly/adoption/*.json
+
 # Test artifacts (reports, logs)
 artifacts/
 

@@ -60,6 +60,25 @@ A minimal starter template for Buildly Marketplace submissions with Robot Framew
 ./ops/startup.sh start docker --port 8080
 ```
 
+## AI-Native Workflow with Buster (optional)
+
+This template works with [Buster](https://github.com/buildlyio/buster), Buildly's
+local-first developer assistant, but does **not** require it — nor any Labs
+connectivity.
+
+```bash
+# Start a new Forge app from this structure
+buster forge new "My App"
+
+# …or bring an EXISTING app to the marketplace (additive; never edits your code)
+buster adopt            # non-destructive scan → devdocs/generated/
+buster forge adapt      # adds BUILDLY.yaml + devdocs templates where missing
+```
+
+Generated, human-readable docs live under `devdocs/generated/` (tracked); volatile
+workflow state under `.buildly/` is git-ignored. Inferred conclusions are proposals
+until a human approves them, and pull requests are never auto-merged.
+
 ## Project Structure
 
 ```
