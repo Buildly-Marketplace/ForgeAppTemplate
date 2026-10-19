@@ -71,6 +71,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      # setup-python ships no third-party packages, so the validator below
+      # dies on `import yaml` before it reads a single field.
+      - name: Install validator dependencies
+        run: pip install --quiet pyyaml
+
       - name: Validate YAML syntax
         run: |
           python3 -c "
